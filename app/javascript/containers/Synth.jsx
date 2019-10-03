@@ -1,11 +1,17 @@
+import _ from 'lodash'
 import React from 'react'
 import Tone from 'tone'
+
+import PlaySwitch from '../components/PlaySwitch'
+import ToggleSwitch from '../components/ToggleSwitch'
+import Slider from '../components/Slider'
+import Knob from '../components/Knob'
 
 export default class Synth extends React.Component {
   constructor(props) {
     super(props)
 
-    // EFFECT + STATE + BIND
+    // EFFECTS
 
     let autoWah = new Tone.AutoWah({
       baseFrequency: 100,
@@ -20,203 +26,134 @@ export default class Synth extends React.Component {
     })
 
     let distortion = new Tone.Distortion({
-      distortion: 5,
+      distortion: 0,
       oversample: 'none'
     })
 
+    autoWah.wet.value = 0
+    distortion.wet.value = 0
+
+    let synth = new Tone.Synth()
+
+    synth.chain(autoWah, distortion, Tone.Master)
+
+    let loop = new Tone.Loop(function(time) {
+      synth.triggerAttackRelease('C2', '8n', time)
+    }, '4n')
+
     this.state = {
-      autoWah: autoWah,
-      autoWahIsOn: false,
-      distortion: distortion,
-      distortionIsOn: false
+      autoWah: { effect: autoWah, wet: 0, on: false },
+      distortion: { effect: distortion, wet: 0, on: false },
+      synth: { instrument: synth, on: false },
+      loop
     }
 
-    this.startSynth = this.startSynth.bind(this)
-    this.toggleAutoWah = this.toggleAutoWah.bind(this)
-    this.toggleDistortion = this.toggleDistortion.bind(this)
+    _.bindAll(
+      this,
+      'toggleSynth',
+      'toggleDistortion',
+      'changeDistortionWetValue',
+      'changeDistortionValue'
+    )
   }
 
-  // CHAIN
+  toggleSynth() {
+    let { synth, loop } = this.state
+    let { instrument, on } = synth
 
-  startSynth() {
-    let synth = new Tone.Synth().chain(
-      this.state.autoWah,
-      this.state.distortion,
-      Tone.Master
-    )
+    on == true ? loop.stop() : loop.start('0m')
 
     this.setState({
-      synth: synth
+      synth: {
+        instrument: instrument,
+        on: !on
+      }
     })
-
-    //let loop = new Tone.Loop(function(time) {
-    //  synth.triggerAttackRelease('C2', '8n', time)
-    //}, '4n')
-
-    //loop.start('0m').stop('16m')
-
-    let part = new Tone.Part(
-      function(time, note) {
-        synth.triggerAttackRelease(
-          note.noteName,
-          note.duration,
-          time,
-          note.velocity
-        )
-      },
-      [
-        {
-          time: '0:0:0',
-          noteName: 'A4',
-          velocity: 1,
-          duration: '5n'
-        },
-        {
-          time: '0.2:0:0',
-          noteName: 'B4',
-          velocity: 1,
-          duration: '5n'
-        },
-        {
-          time: '0.8:0:0',
-          noteName: 'E4',
-          velocity: 1,
-          duration: '5n'
-        },
-        {
-          time: '1:0:0',
-          noteName: 'C5',
-          velocity: 1,
-          duration: '5n'
-        },
-        {
-          time: '1.6:0:0',
-          noteName: 'E4',
-          velocity: 1,
-          duration: '5n'
-        },
-        {
-          time: '1.8:0:0',
-          noteName: 'D#5',
-          velocity: 1,
-          duration: '5n'
-        },
-        {
-          time: '2.1:0:0',
-          noteName: 'D5',
-          velocity: 1,
-          duration: '5n'
-        },
-        {
-          time: '2.4:0:0',
-          noteName: 'C5',
-          velocity: 1,
-          duration: '5n'
-        },
-        {
-          time: '2.8:0:0',
-          noteName: 'A4',
-          velocity: 1,
-          duration: '5n'
-        },
-        {
-          time: '3:0:0',
-          noteName: 'E4',
-          velocity: 1,
-          duration: '5n'
-        },
-        {
-          time: '3.1:0:0',
-          noteName: 'G4',
-          velocity: 1,
-          duration: '5n'
-        },
-        {
-          time: '3.6:0:0',
-          noteName: 'D5',
-          velocity: 1,
-          duration: '5n'
-        },
-        {
-          time: '3.8:0:0',
-          noteName: 'C5',
-          velocity: 1,
-          duration: '5n'
-        },
-        {
-          time: '4.2:0:0',
-          noteName: 'G4',
-          velocity: 1,
-          duration: '5n'
-        },
-        {
-          time: '4.4:0:0',
-          noteName: 'G4',
-          velocity: 1,
-          duration: '5n'
-        },
-        {
-          time: '4.5:0:0',
-          noteName: 'A4',
-          velocity: 1,
-          duration: '5n'
-        }
-      ]
-    ).start(0)
-
-    part.loop = true
-    part.loopEnd = '6m'
 
     Tone.Transport.bpm.value = 160
     Tone.Transport.start()
   }
 
-  // TOGGLE BUTTON
-
-  toggleAutoWah() {
-    if (this.state.autoWahIsOn == true) {
-      this.state.autoWah.wet.value = 0
-
-      this.setState({
-        autoWahIsOn: false
-      })
-    } else {
-      this.state.autoWah.wet.value = 1
-
-      this.setState({
-        autoWahIsOn: true
-      })
-    }
-  }
+  // TOGGLE
 
   toggleDistortion() {
-    if (this.state.distortionIsOn == true) {
-      this.state.distortion.wet.value = 0
+    let { effect, wet, on } = this.state.distortion
 
-      this.setState({
-        distortionIsOn: false
-      })
-    } else {
-      this.state.distortion.wet.value = 1
+    effect.wet.value = on == true ? 0 : wet
+    on = !on
 
-      this.setState({
-        distortionIsOn: true
-      })
-    }
+    this.setState({
+      distortion: {
+        effect,
+        wet,
+        on
+      }
+    })
   }
 
-  // RENDER BUTTON
+  changeDistortionWetValue(value) {
+    let { effect, wet, on } = this.state.distortion
+
+    effect.wet.value = on == true ? value : 0
+    wet = value
+
+    this.setState({
+      distortion: {
+        effect,
+        wet,
+        on
+      }
+    })
+  }
+
+  changeDistortionValue(value) {
+    let { effect, wet, on } = this.state.distortion
+
+    effect.distortion = value
+
+    this.setState({
+      distortion: {
+        effect,
+        wet,
+        on
+      }
+    })
+  }
+
+  // RENDER
 
   render() {
+    let { distortion, synth } = this.state
+
     return (
       <div>
-        <div onClick={this.startSynth}>Start</div>
-        <div onClick={this.toggleAutoWah}>
-          Toogle AutoWah {this.state.autoWahIsOn}
-        </div>
-        <div onClick={this.toggleDistortion}>
-          Toogle Distortion {this.state.distortionIsOn}
-        </div>
+        Toggle Synth
+        <PlaySwitch
+          name="play"
+          value={synth.on}
+          handleToggleClick={this.toggleSynth}
+        />
+        Change Distortion Wet Value
+        <Slider
+          min="0"
+          max="1"
+          value={distortion.effect.wet.value}
+          handleValueChange={this.changeDistortionWetValue}
+        />
+        Change Distortion Value
+        <Slider
+          min="0"
+          max="100"
+          value={distortion.effect.distortion}
+          handleValueChange={this.changeDistortionValue}
+        />
+        // <Knob min="" max="" handleValueChange={this.changeDistortionValue} />
+        Toggle Distortion
+        <ToggleSwitch
+          value="Distortion"
+          current={distortion.on}
+          handleClick={this.toggleDistortion}
+        />
       </div>
     )
   }

@@ -1,0 +1,27 @@
+.ToggleSwitch {
+  display: inline-block;
+  width: 80px;
+  height: 50px;
+  margin: 10px;
+  background: lightgrey;
+  line-height: 50px;
+  text-align: center;
+
+  &.sine {
+    color: red;
+  }
+  &.square {
+    color: green;
+  }
+  &.sawtooth {
+    color: blue;
+  }
+  &.triangle {
+    color: pink;
+  }
+
+  &.on {
+    background: blue;
+    color: white;
+  }
+}
