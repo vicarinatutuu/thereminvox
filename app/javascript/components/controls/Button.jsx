@@ -1,13 +1,14 @@
+import classnames from 'classnames'
 import React from 'react'
 
-export default class Avatar extends React.Component {
+export default class Button extends React.Component {
   constructor(props) {
     super(props)
     this.handleClick = this.handleClick.bind(this)
   }
 
   handleClick() {
-    this.props.handleClick('avatar')
+    this.props.handleClick('button')
   }
 
   render() {
@@ -15,7 +16,7 @@ export default class Avatar extends React.Component {
 
     return (
       <div onClick={this.handleClick} style={{ color: color }}>
-        Avatar {name} {color}
+        Button {name} {color}
       </div>
     )
   }
