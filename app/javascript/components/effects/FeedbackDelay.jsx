@@ -14,6 +14,7 @@ export default class FeedbackDelay extends React.Component {
     let name = 'feedbackDelay'
     const {
       effect,
+      wet,
       on,
       toggleEffect,
       changeEffectWetValue,
@@ -31,7 +32,7 @@ export default class FeedbackDelay extends React.Component {
               name={name}
               min="0"
               max="1"
-              value={effect.wet.value}
+              value={wet}
               handleValueChange={changeEffectWetValue}
             />
           </div>

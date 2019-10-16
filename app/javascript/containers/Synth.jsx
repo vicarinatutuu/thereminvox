@@ -2,6 +2,10 @@ import _ from 'lodash'
 import React from 'react'
 import Tone from 'tone'
 
+// import * as effects from '../tunes/effects'
+// import * as parts from '../tunes/parts'
+// import * as synths from '../tunes/synths'
+
 import PlaySwitch from '../components/controls/PlaySwitch'
 
 import AutoFilter from '../components/effects/AutoFilter'
@@ -22,6 +26,10 @@ import Reverb from '../components/effects/Reverb'
 import StereoWidener from '../components/effects/StereoWidener'
 import Tremolo from '../components/effects/Tremolo'
 import Vibrato from '../components/effects/Vibrato'
+
+// import ToneSynth from '../components/synths/ToneSynth'
+// import NoiseSynth from '../components/synths/NoiseSynth'
+// import PolySynth from '../components/synths/PolySynth'
 
 export default class Synth extends React.Component {
   constructor(props) {
@@ -234,30 +242,30 @@ export default class Synth extends React.Component {
     Tone.Transport.start()
   }
 
-  componentDidMount() {
-    this.generateRandom()
-  }
+  // componentDidMount() {
+  //   this.generateRandom()
+  // }
 
-  getRandomArbitary(min, max) {
-    return Math.floor(Math.random() * (max - min)) + min
-  }
+  // getRandomArbitary(min, max) {
+  //   return Math.floor(Math.random() * (max - min)) + min
+  // }
 
-  generateRandom() {
-    const { lastChange, timeout } = this.state
+  // generateRandom() {
+  //   const { lastChange, timeout } = this.state
 
-    if (Date.now() - lastChange >= timeout) {
-      const random = this.getRandomArbitary(100, 3000)
+  //   if (Date.now() - lastChange >= timeout) {
+  //     const random = this.getRandomArbitary(100, 3000)
 
-      this.setState({
-        lastChange: Date.now(),
-        timeout: random
-      })
+  //     this.setState({
+  //       lastChange: Date.now(),
+  //       timeout: random
+  //     })
 
-      this.changeDistortionValue('distortion', random / 30)
-    }
+  //     this.changeDistortionValue('distortion', random / 30)
+  //   }
 
-    setTimeout(() => this.generateRandom(), timeout)
-  }
+  //   setTimeout(() => this.generateRandom(), timeout)
+  // }
 
   toggleLoop(loopName) {
     let { loop, on } = this.state[loopName]
