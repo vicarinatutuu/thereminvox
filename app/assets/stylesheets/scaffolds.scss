@@ -1,13 +1,19 @@
 body {
-  background-color: #fff;
+  background-color: #cccccc;
   color: #333;
   margin: 33px;
+  padding-top: 50px;
+  padding-left: 50px;
+  padding-right: 50px;
   font-family: verdana, arial, helvetica, sans-serif;
-  font-size: 13px;
+  font-size: 11px;
   line-height: 18px;
 }
 
-p, ol, ul, td {
+p,
+ol,
+ul,
+td {
   font-family: verdana, arial, helvetica, sans-serif;
   font-size: 13px;
   line-height: 18px;
@@ -41,7 +47,8 @@ td {
 }
 
 div {
-  &.field, &.actions {
+  &.field,
+  &.actions {
     margin-bottom: 10px;
   }
 }

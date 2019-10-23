@@ -2,11 +2,10 @@ import _ from 'lodash'
 import React from 'react'
 import Tone from 'tone'
 
-// import * as effects from '../tunes/effects'
-// import * as parts from '../tunes/parts'
-// import * as synths from '../tunes/synths'
-
 import PlaySwitch from '../components/controls/PlaySwitch'
+import Dot from '../components/controls/Dots'
+import Keyboard from '../components/Keyboard'
+import BpmSlider from '../components/controls/BpmSlider'
 
 import AutoFilter from '../components/effects/AutoFilter'
 import AutoPanner from '../components/effects/AutoPanner'
@@ -27,21 +26,18 @@ import StereoWidener from '../components/effects/StereoWidener'
 import Tremolo from '../components/effects/Tremolo'
 import Vibrato from '../components/effects/Vibrato'
 
-// import ToneSynth from '../components/synths/ToneSynth'
-// import NoiseSynth from '../components/synths/NoiseSynth'
-// import PolySynth from '../components/synths/PolySynth'
-
 export default class Synth extends React.Component {
   constructor(props) {
     super(props)
 
     // Effects Pedalboard
+    // const defaultWetValue = 0.8
 
     let autoFilter = new Tone.AutoFilter({
       frequency: 1,
       type: 'sine',
       depth: 1,
-      baseFrequency: 200,
+      baseFrequency: 0,
       octaves: 2.6,
       filter: {
         type: 'lowpass',
@@ -52,12 +48,12 @@ export default class Synth extends React.Component {
     let autoPanner = new Tone.AutoPanner({
       frequency: 1,
       type: 'sine',
-      depth: 1
+      depth: 0
     })
     let autoWah = new Tone.AutoWah({
-      baseFrequency: 100,
+      baseFrequency: 0,
       octaves: 6,
-      sensitivity: 0,
+      sensitivity: 4,
       Q: 2,
       gain: 2,
       follower: {
@@ -95,7 +91,7 @@ export default class Synth extends React.Component {
       feedback: 0.125
     })
     let freeverb = new Tone.Freeverb({
-      roomSize: 0.7,
+      roomSize: 0,
       dampening: 3000
     })
     let jcReverb = new Tone.JCReverb({
@@ -126,10 +122,10 @@ export default class Synth extends React.Component {
       width: 0.5
     })
     let tremolo = new Tone.Tremolo({
-      frequency: 10,
+      frequency: 30,
       type: 'sine',
       depth: 0.5,
-      spread: 180
+      spread: 0
     })
     let vibrato = new Tone.Vibrato({
       maxDelay: 0.005,
@@ -159,9 +155,8 @@ export default class Synth extends React.Component {
     vibrato.wet.value = 0
 
     let synth = new Tone.PolySynth()
-
-    let synth1 = new Tone.Synth()
-    let synth2 = new Tone.Synth()
+    let synth2 = new Tone.PolySynth()
+    let kickDrum = new Tone.PolySynth()
 
     synth.chain(
       autoFilter,
@@ -186,13 +181,224 @@ export default class Synth extends React.Component {
       Tone.Master
     )
 
+    synth2.chain(
+      autoFilter,
+      autoPanner,
+      autoWah,
+      bitCrusher,
+      chebyshev,
+      chorus,
+      convolver,
+      distortion,
+      feedbackDelay,
+      feedbackEffect,
+      freeverb,
+      jcReverb,
+      phaser,
+      pingPongDelay,
+      pitchShift,
+      reverb,
+      stereoWidener,
+      tremolo,
+      vibrato,
+      Tone.Master
+    )
+
+    function kick1(kickDrum) {
+      return new Tone.Loop(
+        function(time, note) {
+          kickDrum.triggerAttackRelease(note, '16n', time)
+        },
+        [
+          'G0',
+          'G0',
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          'G0',
+          null,
+          null,
+          null,
+          null,
+          'G0',
+          null,
+          null,
+          'G0',
+          'G0',
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          'G0',
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          'G0',
+          'G0',
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          'G0',
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          'G0',
+          'G0',
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          'G0',
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          'G0'
+        ],
+        '16n'
+      )
+    }
+
     let loop1 = new Tone.Loop(function(time) {
-      synth.triggerAttackRelease('C2', '8n', time)
-    }, '4n')
+      synth2.triggerAttackRelease('C0', '8n', time)
+    }, '2n')
 
     let loop2 = new Tone.Loop(function(time) {
-      synth.triggerAttackRelease('D2', '6n', time)
-    }, '32n')
+      synth.triggerAttackRelease('C0', '2n', time)
+    }, '1n')
+
+    function part1(synth) {
+      let part = new Tone.Part(
+        function(time, note) {
+          synth.triggerAttackRelease(
+            note.noteName,
+            note.duration,
+            time,
+            note.velocity
+          )
+        },
+        [
+          {
+            time: '1:0:0',
+            noteName: 'A4',
+            velocity: 1,
+            duration: '5n'
+          },
+          {
+            time: '1.2:0:0',
+            noteName: 'B4',
+            velocity: 1,
+            duration: '5n'
+          },
+          {
+            time: '1.8:0:0',
+            noteName: 'E4',
+            velocity: 1,
+            duration: '5n'
+          },
+          {
+            time: '2:0:0',
+            noteName: 'C5',
+            velocity: 1,
+            duration: '5n'
+          },
+          {
+            time: '2.6:0:0',
+            noteName: 'E4',
+            velocity: 1,
+            duration: '5n'
+          },
+          {
+            time: '2.8:0:0',
+            noteName: 'D#5',
+            velocity: 1,
+            duration: '5n'
+          },
+          {
+            time: '3.1:0:0',
+            noteName: 'D5',
+            velocity: 1,
+            duration: '5n'
+          },
+          {
+            time: '3.4:0:0',
+            noteName: 'C5',
+            velocity: 1,
+            duration: '5n'
+          },
+          {
+            time: '3.8:0:0',
+            noteName: 'A4',
+            velocity: 1,
+            duration: '5n'
+          },
+          {
+            time: '4:0:0',
+            noteName: 'E4',
+            velocity: 1,
+            duration: '5n'
+          },
+          {
+            time: '4.1:0:0',
+            noteName: 'G4',
+            velocity: 1,
+            duration: '5n'
+          },
+          {
+            time: '4.6:0:0',
+            noteName: 'D5',
+            velocity: 1,
+            duration: '5n'
+          },
+          {
+            time: '4.8:0:0',
+            noteName: 'C5',
+            velocity: 1,
+            duration: '5n'
+          },
+          {
+            time: '5.2:0:0',
+            noteName: 'G4',
+            velocity: 1,
+            duration: '5n'
+          },
+          {
+            time: '5.4:0:0',
+            noteName: 'G4',
+            velocity: 1,
+            duration: '5n'
+          },
+          {
+            time: '5.5:0:0',
+            noteName: 'A4',
+            velocity: 1,
+            duration: '5n'
+          }
+        ]
+      )
+
+      return part
+    }
 
     this.state = {
       lastChange: Date.now(),
@@ -217,6 +423,7 @@ export default class Synth extends React.Component {
       tremolo: { effect: tremolo, wet: 0, on: false },
       vibrato: { effect: vibrato, wet: 0, on: false },
       synth: { instrument: synth, on: false },
+      synth2: { instrument: synth, on: false },
       loop1: {
         loop: loop1,
         on: false
@@ -224,21 +431,40 @@ export default class Synth extends React.Component {
       loop2: {
         loop: loop2,
         on: false
+      },
+      part1: {
+        part: part1(synth),
+        on: false
+      },
+      kick1: {
+        loop: kick1(kickDrum),
+        on: false
       }
     }
 
     _.bindAll(
       this,
-      'getRandomArbitary',
-      'generateRandom',
+      //'getRandomArbitary',
+      //'generateRandom',
+      'handleMouseDown',
+      'handleMouseUp',
       'toggleLoop',
+      'togglePart',
+      'toggleDrum',
       'toggleEffect',
       'changeEffectWetValue',
       'changeDistortionValue',
-      'changeFeedbackDelayValue'
+      'changeFreeverbValue',
+      'changeTremoloValue',
+      'changeAutoWahValue',
+      'changeAutoFilterValue',
+      'changeAutoFilter1Value',
+      'bpmChange',
+      'changeVolumeValue',
+      'changeFrequencyAutoFilter'
     )
 
-    Tone.Transport.bpm.value = 85
+    Tone.Transport.bpm.value = 115
     Tone.Transport.start()
   }
 
@@ -280,6 +506,87 @@ export default class Synth extends React.Component {
     })
   }
 
+  togglePart(partName) {
+    let { part, on } = this.state[partName]
+
+    on == true ? part.stop() : part.at('1m')
+    part.start(0)
+    part.loop = true
+    part.loopEnd = '6m'
+
+    this.setState({
+      [`${partName}`]: {
+        part: part,
+        on: !on
+      }
+    })
+  }
+
+  toggleDrum(drumLoop) {
+    let drumLoopSnare = this.state[drumLoop + 'Snare']
+    let drumLoopKick = this.state[drumLoop + 'Kick']
+    let { drumLoopPlaying } = this.state
+    let drumLoopSnarePlaying = this.state[drumLoopPlaying + 'Snare']
+    let drumLoopKickPlaying = this.state[drumLoopPlaying + 'Kick']
+
+    if (drumLoopPlaying != 'none') {
+      drumLoopSnarePlaying.loop.mute = true
+      drumLoopKickPlaying.loop.mute = true
+    }
+
+    if (drumLoopSnare.on != true) {
+      drumLoopSnare.loop.mute = false
+      // drumLoopSnare.loop.start()
+    }
+
+    if (drumLoopKick.on != true) {
+      drumLoopKick.loop.mute = false
+      // drumLoopKick.loop.start()
+    }
+
+    if (drumLoopPlaying != 'none') {
+      this.setState({
+        [`${drumLoopPlaying + 'Snare'}`]: {
+          loop: drumLoopSnarePlaying.loop,
+          on: !drumLoopSnarePlaying.on
+        },
+        [`${drumLoopPlaying + 'Kick'}`]: {
+          loop: drumLoopKickPlaying.loop,
+          on: !drumLoopKickPlaying.on
+        },
+        [`${drumLoop + 'Snare'}`]: {
+          loop: drumLoopSnare.loop,
+          on: !drumLoopSnare.on
+        },
+        [`${drumLoop + 'Kick'}`]: {
+          loop: drumLoopKick.loop,
+          on: !drumLoopKick.on
+        },
+        drumLoopPlaying: drumLoop
+      })
+    } else {
+      this.setState({
+        [`${drumLoop + 'Snare'}`]: {
+          loop: drumLoopSnare.loop,
+          on: !drumLoopSnare.on
+        },
+        [`${drumLoop + 'Kick'}`]: {
+          loop: drumLoopKick.loop,
+          on: !drumLoopKick.on
+        },
+        drumLoopPlaying: drumLoop
+      })
+    }
+  }
+
+  changeVolumeValue(synthName, effectName, value) {
+    Tone.Master.volume.value = Math.round(value)
+
+    this.setState({
+      volume: Math.round(value)
+    })
+  }
+
   // Buttons for Effects
 
   toggleEffect(effectName) {
@@ -294,6 +601,17 @@ export default class Synth extends React.Component {
         wet,
         on
       }
+    })
+  }
+
+  changeFrequencyAutoFilter(value) {
+    let { effect, frTemp, on } = this.state.autoFilter
+    // effect.frequency.value = on ? value : 0;
+    effect.octaves = value
+    // frTemp = value;
+
+    this.setState({
+      autoFilter: { effect, on }
     })
   }
 
@@ -326,13 +644,13 @@ export default class Synth extends React.Component {
     })
   }
 
-  changeFeedbackDelayValue(effectName, value) {
-    let { effect, wet, on } = this.state.feedbackDelay
+  changeAutoWahValue(effectName, value) {
+    let { effect, wet, on } = this.state.autoWah
 
-    effect.maxDelay = value
+    effect.baseFrequency = value
 
     this.setState({
-      feedbackDelay: {
+      autoWah: {
         effect,
         wet,
         on
@@ -340,26 +658,140 @@ export default class Synth extends React.Component {
     })
   }
 
+  changeAutoFilterValue(effectName, value) {
+    let { effect, wet, on } = this.state.autoFilter
+
+    effect.baseFrequency = value
+
+    this.setState({
+      autoFilter: {
+        effect,
+        wet,
+        on
+      }
+    })
+  }
+
+  changeAutoFilter1Value(effectName, value) {
+    let { effect, wet, on } = this.state.autoFilter
+
+    effect.type = value
+
+    this.setState({
+      autoFilter: {
+        effect,
+        wet,
+        on
+      }
+    })
+  }
+
+  changeFreeverbValue(effectName, value) {
+    let { effect, wet, on } = this.state.freeverb
+
+    effect.roomSize.value = value
+
+    this.setState({
+      freeverb: {
+        effect,
+        wet,
+        on
+      }
+    })
+  }
+
+  changeTremoloValue(effectName, value) {
+    let { effect, wet, on } = this.state.tremolo
+
+    effect.spread = value
+
+    this.setState({
+      tremolo: {
+        effect,
+        wet,
+        on
+      }
+    })
+  }
+
+  handleMouseDown(note, octave) {
+    let { synthKeys, triggerAttack } = this.state
+
+    synthKeys.triggerAttack(`${note}${octave}`)
+
+    console.log('Down')
+
+    this.setState({
+      synthKeys
+    })
+  }
+
+  handleMouseUp() {
+    let { synthKeys, triggerRelease } = this.state
+    synthKeys.triggerRelease()
+
+    console.log('Up')
+
+    this.setState({
+      synthKeys
+    })
+  }
+
+  bpmChange(value) {
+    let { tempo } = this.state
+    tempo = Math.round(value)
+    Tone.Transport.bpm.value = tempo
+    //console.log('new bpm', Tone.Transport.bpm.value)
+
+    this.setState({
+      tempo
+    })
+  }
+
   // Render
 
   render() {
-    let { distortion, synth, loop1, loop2 } = this.state
-    let { toggleEffect } = this
+    let {
+      volume,
+      tempo,
+      distortion,
+      synth,
+      synth2,
+      loop1,
+      loop2,
+      part1,
+      kick1
+    } = this.state
+    let { toggleEffect, toggleLoop, togglePart } = this
 
     return (
       <div>
-        Toggle Loop 1
-        <PlaySwitch
-          name="play"
-          value={loop1.on}
-          handleToggleClick={() => this.toggleLoop('loop1')}
-        />
-        Toggle Loop 2
-        <PlaySwitch
-          name="play"
-          value={loop2.on}
-          handleToggleClick={() => this.toggleLoop('loop2')}
-        />
+        <div className="plays">
+          <div className="play">
+            <div className="One">シンセサイザー</div>
+            <div className="One1">
+              <PlaySwitch
+                name="play"
+                value={loop1.on}
+                handleToggleClick={() => this.toggleLoop('loop1')}
+              />
+            </div>
+            <div className="One2">
+              <PlaySwitch
+                name="play"
+                value={loop2.on}
+                handleToggleClick={() => this.toggleLoop('loop2')}
+              />
+            </div>
+            <div className="One3">
+              <PlaySwitch
+                name="play"
+                value={part1.on}
+                handleToggleClick={() => this.togglePart('part1')}
+              />
+            </div>
+          </div>
+        </div>
         <div className="effectsBoard">
           <Distortion
             {...this.state.distortion}
@@ -367,11 +799,29 @@ export default class Synth extends React.Component {
             changeEffectWetValue={this.changeEffectWetValue}
             changeDistortionValue={this.changeDistortionValue}
           />
-          <FeedbackDelay
-            {...this.state.feedbackDelay}
-            toggleEffect={() => toggleEffect('feedbackDelay')}
+          <Freeverb
+            {...this.state.freeverb}
+            toggleEffect={() => toggleEffect('freeverb')}
             changeEffectWetValue={this.changeEffectWetValue}
-            changeFeedbackDelayValue={this.changeFeedbackDelayValue}
+            changeFreeverbValue={this.changeFreeverbValue}
+          />
+          <Tremolo
+            {...this.state.tremolo}
+            toggleEffect={() => toggleEffect('tremolo')}
+            changeEffectWetValue={this.changeEffectWetValue}
+            changeTremoloValue={this.changeTremoloValue}
+          />
+          <AutoWah
+            {...this.state.autoWah}
+            toggleEffect={() => toggleEffect('autoWah')}
+            changeEffectWetValue={this.changeEffectWetValue}
+            changeAutoWahValue={this.changeAutoWahValue}
+          />
+          <AutoFilter
+            {...this.state.autoFilter}
+            toggleEffect={() => toggleEffect('autoFilter')}
+            changeEffectWetValue={this.changeEffectWetValue}
+            changeAutoFilterValue={this.changeAutoFilterValue}
           />
         </div>
       </div>

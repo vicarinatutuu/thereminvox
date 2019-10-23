@@ -16,6 +16,14 @@ export default class PlaySwitch extends React.Component {
       switchOff: value
     })
 
-    return <div className={classes} onClick={handleToggleClick} />
+    return (
+      <div className={classes} onClick={handleToggleClick}>
+        <div id="outer-circle-m">
+          <div id="outer-circle">
+            <div id="inner-circle2"></div>
+          </div>
+        </div>
+      </div>
+    )
   }
 }

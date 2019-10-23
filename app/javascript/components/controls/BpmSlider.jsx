@@ -48,15 +48,6 @@ export default class Slider extends React.Component {
     document.addEventListener('mousemove', this.handleMouseMove)
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    const { width } = this.state.area
-    //if (nextState.thumb.left == this.state.thumb.left) {
-    if (nextProps.value != this.props.value) {
-      nextState.thumb.left = this.calculateLeft(width)
-    }
-    return true
-  }
-
   handleDragOver(e) {
     e.preventDefault()
   }
@@ -73,7 +64,7 @@ export default class Slider extends React.Component {
     const { name, handleMouseUp } = this.props
 
     if (this.state.mouseDown) {
-      //  handleMouseUp(name)
+      // handleMouseUp(name);
 
       this.setState({
         mouseDown: false
@@ -90,14 +81,14 @@ export default class Slider extends React.Component {
   }
 
   moveThumb(screenX) {
-    const { name, min, max, handleValueChange } = this.props
+    const { min, max, handleValueChange } = this.props
     const areaLeft = this.state.area.left
     const areaRight = this.state.area.right
     const thumbLeft = screenX - areaLeft
 
     if (thumbLeft >= 0 && screenX <= areaRight) {
       const value = this.calculateValue(thumbLeft)
-      handleValueChange(name, value)
+      handleValueChange(value)
 
       this.setState({
         thumb: {
@@ -134,18 +125,22 @@ export default class Slider extends React.Component {
     }
 
     return (
-      <div
-        className="Slider"
-        ref={this.slideArea}
-        onDragOver={this.handleDragOver}
-        onDrop={this.handleDrop}
-      >
-        <div
-          className="thumb"
-          style={style}
-          onMouseDown={this.handleMouseDown}
-        />
-        {name}
+      <div className="Bpm">
+        <h1>Bpm</h1>
+        <div className="Bpm2">
+          <div
+            className="Slider"
+            ref={this.slideArea}
+            onDragOver={this.handleDragOver}
+            onDrop={this.handleDrop}
+          >
+            <div
+              className="thumb"
+              style={style}
+              onMouseDown={this.handleMouseDown}
+            />
+          </div>
+        </div>
       </div>
     )
   }

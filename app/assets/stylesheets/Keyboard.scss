@@ -1,0 +1,24 @@
+.keyboard-container {
+  margin-top: 40px;
+  padding: 20px;
+  width: 100%;
+  background-color: #e3e3e3;
+  border-radius: 20px;
+}
+.keyboard {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+  color: #1a1a1a;
+  font-size: 11px;
+  margin-left: 10px;
+  margin-right: 10px;
+
+  input {
+    border: 1px solid #3f4257;
+    background-color: #272838;
+    border-radius: 1px;
+    padding: 3px;
+    color: #698eff;
+  }
+}

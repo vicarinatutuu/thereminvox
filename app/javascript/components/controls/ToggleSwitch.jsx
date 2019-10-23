@@ -23,7 +23,13 @@ export default class ToggleSwitch extends React.Component {
 
     return (
       <div className={classes} onClick={this.handleClick}>
-        {value}
+        <div id="WO">PUSH!</div>
+        <div id="outer-circle">
+          <div id="inner-circle">
+            <div id="inner-circle2">{value}</div>
+          </div>
+        </div>
+        <div id="WO2">プッシュ</div>
       </div>
     )
   }
